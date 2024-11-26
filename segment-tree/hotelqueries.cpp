@@ -28,20 +28,28 @@ void build(int id = 0, int ns = 0, int ne = n - 1)
     tree[id] = mrg(tree[l], tree[r]);
 }
 
-ll query(int qs, int qe, int id = 0, int ns = 0, int ne = n - 1)
+int query(int id = 0, int ns = 0 , int ne = n - 1, int val=0)
 {
-    if (ns > qe || qs > ne)
+    if (ns == ne)
     {
-        return -1e7; /// infnity
+        if (tree[id] >= val)
+        {
+            return ns;
+        }
+        else
+        {
+            return -1 ;
+        }
     }
-    if (qs <= ns && qe >= ne)
-    {
-        return tree[id];
-    }
-    int l = 2 * id + 1;
-    int r = l + 1;
     int md = ns + (ne - ns) / 2;
-    return mrg(query(qs, qe, l, ns, md), query(qs, qe, r, md + 1, ne));
+    if (tree[2 * id + 1] >= val)
+    {
+        return query(2 * id + 1, ns, md ,val );
+    }
+    else
+    {
+        return query(2 * id + 2, md + 1, ne, val  );
+    }
 }
 
 void upd(int pos, int val, int id = 0, int ns = 0, int ne = n - 1)
@@ -82,37 +90,19 @@ int main()
 
     for (int i = 0; i < 4 * n; i++)
     {
-        tree[i] = 0; 
+        tree[i] = 0;
     }
     build();
-    int left = 1;
-    int right = n;
-    int mid;
-    int ans;
+    int x;
     for (int i = 0; i < m; i++)
     {
-        ans = -1;
-        left = 0;
-        right = n - 1;
-        while (left <= right)
-        {
-            mid = (left + right) / 2;
-            if (query(left, mid) >= r[i])
-            {
-                ans = mid;
-                right = mid - 1;
-            }
-            else
-            {
-                left = mid + 1;
-            }
+        if(tree[0]<r[i]){
+            cout << 0 << endl;
+            continue; 
         }
-
-        cout << ans + 1 << endl;
-        if (ans != -1)
-        {
-            upd(ans, h[ans] - r[i]);
-        }
+        x = query(0,0,n-1,r[i]);
+        cout << x+1 << endl;
+        upd(x, h[x] - r[i]);
     }
     return 0;
 }
