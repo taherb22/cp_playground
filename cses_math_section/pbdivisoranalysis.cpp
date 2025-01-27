@@ -32,20 +32,39 @@ void solve()
     cin >> n;
     vector<pair<ll, ll>> powfact(n);
     ll prodk = 1;
+    bool perfectsquare = true;
     for (int i = 0; i < n; i++)
     {
         cin >> x >> k;
         powfact[i] = {x, k};
+        if(k%2!=0){
+            perfectsquare = false; 
+        }
     }
+    
     ll s = 1;
+
     ll numberofdiv = 1, sumofdiv = 1, prodofdiv = 1;
+    ll cnt_number_of_div_using_fermat = 1;
     for (int i = 0; i < n; i++)
     {
         ll coeffsum = (powfact[i].second * (powfact[i].second + 1)) / 2;
-        numberofdiv = ((powfact[i].sec  ond + 1) * numberofdiv) % mod;
-        prodofdiv = (bin_pow(powfact[i].first,  * coeffsum, mod) * prodofdiv) % mod;
+        numberofdiv = ((powfact[i].second + 1) * numberofdiv) % mod;
+        cnt_number_of_div_using_fermat = ((powfact[i].second + 1) * cnt_number_of_div_using_fermat) % mod - 1;
         s = ((powfact[i].first - 1) * s) % mod;
         sumofdiv = (sumofdiv * (bin_pow(powfact[i].first, powfact[i].second + 1, mod) - 1)) % mod;
+    }
+    if(perfectsquare){
+        cnt_number_of_div_using_fermat = numberofdiv* bin_pow(2,mod-3,mod-1) + 1%mod-1; 
+    }
+    else{
+        cnt_number_of_div_using_fermat = numberofdiv *  bin_pow(2,mod-3,mod-1); 
+    }
+    cout << cnt_number_of_div_using_fermat << endl; 
+    for (int i = 0; i < n; i++)
+    {
+        prodofdiv = (prodofdiv * bin_pow(powfact[i].first, (powfact[i].second%(mod-1)*cnt_number_of_div_using_fermat%(mod-1))%(mod-1), mod)) % mod;
+        // cout << prodofdiv << endl;
     }
     s = bin_pow(s, mod - 2, mod);
     sumofdiv = (sumofdiv * s) % mod;
@@ -57,7 +76,6 @@ int main()
     cin.tie(0);
     cout.tie(0);
     int t = 1;
-
     while (t--)
     {
         solve();
